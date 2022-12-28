@@ -2,8 +2,12 @@
 
 namespace Lkt\Http;
 
+use Lkt\Http\Traits\ContentTypeTrait;
+
 class Response
 {
+    use ContentTypeTrait;
+
     protected $code;
     protected $responseData = [];
 
@@ -29,7 +33,7 @@ class Response
      * @param array $responseData
      * @return $this
      */
-    public function setResponseData(array $responseData): self
+    public function setResponseData(array $responseData): static
     {
         $this->responseData = $responseData;
         return $this;
@@ -147,7 +151,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function status(int $code = 200, array $responseData = []): self
+    public static function status(int $code = 200, array $responseData = []): static
     {
         return new static($code, $responseData);
     }
@@ -156,7 +160,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function ok(array $responseData = []): self
+    public static function ok(array $responseData = []): static
     {
         return static::status(200, $responseData);
     }
@@ -165,7 +169,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function created(array $responseData = []): self
+    public static function created(array $responseData = []): static
     {
         return static::status(201, $responseData);
     }
@@ -174,7 +178,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function accepted(array $responseData = []): self
+    public static function accepted(array $responseData = []): static
     {
         return static::status(202, $responseData);
     }
@@ -183,7 +187,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function noContent(array $responseData = []): self
+    public static function noContent(array $responseData = []): static
     {
         return static::status(204, $responseData);
     }
@@ -192,7 +196,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function multipleChoices(array $responseData = []): self
+    public static function multipleChoices(array $responseData = []): static
     {
         return static::status(300, $responseData);
     }
@@ -201,7 +205,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function movedPermanently(array $responseData = []): self
+    public static function movedPermanently(array $responseData = []): static
     {
         return static::status(301, $responseData);
     }
@@ -210,7 +214,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function found(array $responseData = []): self
+    public static function found(array $responseData = []): static
     {
         return static::status(302, $responseData);
     }
@@ -219,7 +223,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function seeOther(array $responseData = []): self
+    public static function seeOther(array $responseData = []): static
     {
         return static::status(303, $responseData);
     }
@@ -228,7 +232,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function notModified(array $responseData = []): self
+    public static function notModified(array $responseData = []): static
     {
         return static::status(304, $responseData);
     }
@@ -237,7 +241,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function badRequest(array $responseData = []): self
+    public static function badRequest(array $responseData = []): static
     {
         return static::status(400, $responseData);
     }
@@ -246,7 +250,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function unauthorized(array $responseData = []): self
+    public static function unauthorized(array $responseData = []): static
     {
         return static::status(401, $responseData);
     }
@@ -255,7 +259,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function forbidden(array $responseData = []): self
+    public static function forbidden(array $responseData = []): static
     {
         return static::status(403, $responseData);
     }
@@ -264,7 +268,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function notFound(array $responseData = []): self
+    public static function notFound(array $responseData = []): static
     {
         return static::status(404, $responseData);
     }
@@ -273,7 +277,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function methodNotAllowed(array $responseData = []): self
+    public static function methodNotAllowed(array $responseData = []): static
     {
         return static::status(405, $responseData);
     }
@@ -282,7 +286,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function internalServerError(array $responseData = []): self
+    public static function internalServerError(array $responseData = []): static
     {
         return static::status(500, $responseData);
     }
@@ -291,7 +295,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function notImplemented(array $responseData = []): self
+    public static function notImplemented(array $responseData = []): static
     {
         return static::status(501, $responseData);
     }
@@ -300,7 +304,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function badGateway(array $responseData = []): self
+    public static function badGateway(array $responseData = []): static
     {
         return static::status(502, $responseData);
     }
@@ -309,7 +313,7 @@ class Response
      * @param array $responseData
      * @return static
      */
-    public static function serviceUnavailable(array $responseData = []): self
+    public static function serviceUnavailable(array $responseData = []): static
     {
         return static::status(503, $responseData);
     }
