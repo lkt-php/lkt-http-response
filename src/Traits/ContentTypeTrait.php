@@ -46,7 +46,10 @@ trait ContentTypeTrait
     public function sendJSONContent(): static
     {
         if ($this->isJSONContentType()) {
-            echo json_encode($this->getResponseData());
+            $data = $this->getResponseData();
+            if (count($data) > 0){
+                echo json_encode($data);
+            }
         }
         return $this;
     }
