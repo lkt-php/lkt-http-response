@@ -27,6 +27,11 @@ trait ContentTypeTrait
         return $this->contentType === ContentType::JSON;
     }
 
+    public function isTextHTMLContentType(): bool
+    {
+        return $this->contentType === ContentType::TEXT_HTML;
+    }
+
     public function sendContentTypeHeader(): bool
     {
         $contentType = $this->contentType;
@@ -49,6 +54,17 @@ trait ContentTypeTrait
             $data = $this->getResponseData();
             if (count($data) > 0){
                 echo json_encode($data);
+            }
+        }
+        return $this;
+    }
+
+    public function sendTextHTMLContent(): static
+    {
+        if ($this->isTextHTMLContentType()) {
+            $data = $this->getResponseData();
+            if (count($data) > 0 && isset($data['html'])){
+                echo $data['html'];
             }
         }
         return $this;

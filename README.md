@@ -55,5 +55,51 @@ The `Response` instance can send any http header with the status code message, o
 use Lkt\Http\Response;
 
 $response = Response::ok(['hey' => 'how are you?']);
-$response->sendStatusHeader(); 
+
+// Set content type to JSON:
+$response->setContentTypeJSON();
+
+// Or to text/html
+$response->setContentTypeTextHTML();
+
+// Also, you can set the expiration and max age:
+$response->setHeaderCacheControlMaxAge(84600);
+$response->setHeaderExpires(84600);
+
+// Or use the shortcuts:
+$response->setHeaderExpiresToOneDay();
+$response->setHeaderExpiresToOneWeek();
+$response->setHeaderExpiresToOneMonth();
+$response->setHeaderExpiresToOneYear();
+
+$response->setHeaderCacheControlMaxAgeToOneDay();
+$response->setHeaderCacheControlMaxAgeToOneWeek();
+$response->setHeaderCacheControlMaxAgeToOneMonth();
+$response->setHeaderCacheControlMaxAgeToOneYear();
+
+// Send the response headers
+$response->sendHeaders(); 
+```
+
+## Response format
+
+When using a text/html response, the array with the response data must have the html in a `html` key.
+
+```php
+use Lkt\Http\Response;
+$response = Response::ok(['html' => 'may the force be with you']);
+$response->setContentTypeTextHTML();
+
+// Output 'html' content
+$response->sendTextHTMLContent();
+```
+
+For that reason, in order to work with a simpler code, there are shortcuts for 20X responses:
+```php
+use Lkt\Http\Response;
+// Same as the previous example constructor
+$response = Response::okTextHTML('may the force be with you');
+
+// Output 'html' content
+$response->sendTextHTMLContent();
 ```
