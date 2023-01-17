@@ -18,6 +18,12 @@ class ResponseTest extends TestCase
         $this->assertEquals(['hello' => 'world'], $response->getResponseData());
 
 
+        $response = Response::ok('hello world');
+
+        $this->assertEquals(200, $response->getCode());
+        $this->assertEquals('hello world', $response->getResponseData());
+
+
         $response = Response::created(['hello' => 'world']);
 
         $this->assertEquals(201, $response->getCode());

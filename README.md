@@ -63,19 +63,19 @@ $response->setContentTypeJSON();
 $response->setContentTypeTextHTML();
 
 // Also, you can set the expiration and max age:
-$response->setHeaderCacheControlMaxAge(84600);
-$response->setHeaderExpires(84600);
+$response->setCacheControlMaxAgeHeaderToOneYear(84600);
+$response->setExpiresHeader(84600);
 
 // Or use the shortcuts:
-$response->setHeaderExpiresToOneDay();
-$response->setHeaderExpiresToOneWeek();
-$response->setHeaderExpiresToOneMonth();
-$response->setHeaderExpiresToOneYear();
+$response->setExpiresHeaderToOneDay();
+$response->setExpiresHeaderToOneWeek();
+$response->setExpiresHeaderToOneMonth();
+$response->setExpiresHeaderToOneYear();
 
-$response->setHeaderCacheControlMaxAgeToOneDay();
-$response->setHeaderCacheControlMaxAgeToOneWeek();
-$response->setHeaderCacheControlMaxAgeToOneMonth();
-$response->setHeaderCacheControlMaxAgeToOneYear();
+$response->setCacheControlMaxAgeHeaderToOneDay();
+$response->setCacheControlMaxAgeHeaderToOneWeek();
+$response->setCacheControlMaxAgeHeaderToOneMonth();
+$response->setCacheControlMaxAgeHeaderToOneYear();
 
 // Send the response headers
 $response->sendHeaders(); 
@@ -83,23 +83,38 @@ $response->sendHeaders();
 
 ## Response format
 
-When using a text/html response, the array with the response data must have the html in a `html` key.
+When using a text/html response, simply pass the string as an argument. By default, this will turn the response content type to `text/html`.
 
 ```php
 use Lkt\Http\Response;
-$response = Response::ok(['html' => 'may the force be with you']);
-$response->setContentTypeTextHTML();
+$response = Response::ok('may the force be with you');
 
-// Output 'html' content
-$response->sendTextHTMLContent();
+// Output content
+$response->sendContent();
 ```
 
-For that reason, in order to work with a simpler code, there are shortcuts for 20X responses:
+## Sending files
+
+You can send a file in a similar way, only remember to refresh the MIME type
+
 ```php
 use Lkt\Http\Response;
-// Same as the previous example constructor
-$response = Response::okTextHTML('may the force be with you');
 
-// Output 'html' content
-$response->sendTextHTMLContent();
+// Get a string with the content of the file
+$content = file_get_contents($pathToImage);
+
+// Create a response
+$response = Response::ok($content);
+
+// Set the MIME type for the file
+// Automatically detect the mime type from file extension
+// Notice: If the extension wasn't detected, the response will turn into an octet-stream
+$response->setContentTypeByFileExtension('jpg'); // It can be pdf, png, doc, docx, csv, ...
+
+// Set the last modified header
+$lastModified = filemtime($pathToImage);
+$response->setLastModifiedHeader($lastModified);
+
+// Output 'img' content
+$response->sendContent();
 ```

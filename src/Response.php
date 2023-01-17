@@ -9,15 +9,20 @@ class Response
     use ContentTypeTrait;
 
     protected int $code = 1;
-    protected array $responseData = [];
+    protected array|string $responseData = [];
 
     protected int $headerCacheControlMaxAge = -1;
     protected int $headerExpires = -1;
+    protected int $headerLastModified = -1;
 
-    public function __construct(int $code = 1, array $responseData = [])
+    public function __construct(int $code = 1, array|string $responseData = [])
     {
         $this->code = $code;
         $this->responseData = $responseData;
+
+        if (is_string($responseData)) {
+            $this->setContentTypeTextHTML();
+        }
     }
 
     public function getCode(): int
@@ -31,72 +36,78 @@ class Response
         return $this;
     }
 
-    public function getResponseData(): array
+    public function getResponseData(): array|string
     {
         return $this->responseData;
     }
 
-    public function setHeaderCacheControlMaxAge(int $time): static
+    public function setCacheControlMaxAgeHeader(int $time): static
     {
         $this->headerCacheControlMaxAge = $time;
         return $this;
     }
 
-    public function setHeaderCacheControlMaxAgeToOneDay(): static
+    public function setCacheControlMaxAgeHeaderToOneDay(): static
     {
         $this->headerCacheControlMaxAge = 86400;
         return $this;
     }
 
-    public function setHeaderCacheControlMaxAgeToOneWeek(): static
+    public function setCacheControlMaxAgeHeaderToOneWeek(): static
     {
         $this->headerCacheControlMaxAge = 604800;
         return $this;
     }
 
-    public function setHeaderCacheControlMaxAgeToOneMonth(): static
+    public function setCacheControlMaxAgeHeaderToOneMonth(): static
     {
         $this->headerCacheControlMaxAge = 2419200;
         return $this;
     }
 
-    public function setHeaderCacheControlMaxAgeToOneYear(): static
+    public function setCacheControlMaxAgeHeaderToOneYear(): static
     {
         $this->headerCacheControlMaxAge = 31536000;
         return $this;
     }
 
-    public function setHeaderExpires(int $time): static
+    public function setExpiresHeader(int $time): static
     {
         $this->headerExpires = $time;
         return $this;
     }
 
-    public function setHeaderExpiresToOneDay(): static
+    public function setExpiresHeaderToOneDay(): static
     {
         $this->headerExpires = 86400;
         return $this;
     }
 
-    public function setHeaderExpiresToOneWeek(): static
+    public function setExpiresHeaderToOneWeek(): static
     {
         $this->headerExpires = 604800;
         return $this;
     }
 
-    public function setHeaderExpiresToOneMonth(): static
+    public function setExpiresHeaderToOneMonth(): static
     {
         $this->headerExpires = 2419200;
         return $this;
     }
 
-    public function setHeaderExpiresToOneYear(): static
+    public function setExpiresHeaderToOneYear(): static
     {
         $this->headerExpires = 31536000;
         return $this;
     }
 
-    public function sendHeaders(): void
+    public function setLastModifiedHeader(int $time): static
+    {
+        $this->headerLastModified = $time;
+        return $this;
+    }
+
+    public function sendHeaders(): static
     {
         $this->sendStatusHeader();
         $this->sendContentTypeHeader();
@@ -108,6 +119,12 @@ class Response
         if ($this->headerExpires > -1) {
             header('Expires: ' . gmdate(DATE_RFC1123, time() + $this->headerExpires));
         }
+
+        if ($this->headerLastModified > -1) {
+            header('Last-Modified: ' . gmdate(DATE_RFC1123, $this->headerLastModified));
+        }
+        
+        return $this;
     }
 
     public function sendStatusHeader(): bool
@@ -206,125 +223,97 @@ class Response
         return false;
     }
 
-    public static function status(int $code = 200, array $responseData = []): static
+    public static function status(int $code = 200, array|string $responseData = []): static
     {
         return new static($code, $responseData);
     }
 
-    public static function ok(array $responseData = []): static
+    public static function ok(array|string $responseData = []): static
     {
         return static::status(200, $responseData);
     }
 
-    public static function okTextHTML(string $html): static
-    {
-        $r = static::status(200, ['html' => $html]);
-        $r->setContentTypeTextHTML();
-        return $r;
-    }
-
-    public static function created(array $responseData = []): static
+    public static function created(array|string $responseData = []): static
     {
         return static::status(201, $responseData);
     }
 
-    public static function createdTextHTML(string $html): static
-    {
-        $r = static::status(201, ['html' => $html]);
-        $r->setContentTypeTextHTML();
-        return $r;
-    }
-
-    public static function accepted(array $responseData = []): static
+    public static function accepted(array|string $responseData = []): static
     {
         return static::status(202, $responseData);
     }
 
-    public static function acceptedTextHTML(string $html): static
-    {
-        $r = static::status(202, ['html' => $html]);
-        $r->setContentTypeTextHTML();
-        return $r;
-    }
-
-    public static function noContent(array $responseData = []): static
+    public static function noContent(array|string $responseData = []): static
     {
         return static::status(204, $responseData);
     }
 
-    public static function noContentTextHTML(string $html): static
-    {
-        $r = static::status(204, ['html' => $html]);
-        $r->setContentTypeTextHTML();
-        return $r;
-    }
-
-    public static function multipleChoices(array $responseData = []): static
+    public static function multipleChoices(array|string $responseData = []): static
     {
         return static::status(300, $responseData);
     }
 
-    public static function movedPermanently(array $responseData = []): static
+    public static function movedPermanently(array|string $responseData = []): static
     {
         return static::status(301, $responseData);
     }
 
-    public static function found(array $responseData = []): static
+    public static function found(array|string $responseData = []): static
     {
         return static::status(302, $responseData);
     }
 
-    public static function seeOther(array $responseData = []): static
+    public static function seeOther(array|string $responseData = []): static
     {
         return static::status(303, $responseData);
     }
 
-    public static function notModified(array $responseData = []): static
+    public static function notModified(array|string $responseData = []): static
     {
         return static::status(304, $responseData);
     }
 
-    public static function badRequest(array $responseData = []): static
+    public static function badRequest(array|string $responseData = []): static
     {
         return static::status(400, $responseData);
     }
 
-    public static function unauthorized(array $responseData = []): static
+    public static function unauthorized(array|string $responseData = []): static
     {
         return static::status(401, $responseData);
     }
 
-    public static function forbidden(array $responseData = []): static
+    public static function forbidden(array|string $responseData = []): static
     {
         return static::status(403, $responseData);
     }
 
-    public static function notFound(array $responseData = []): static
+    public static function notFound(array|string $responseData = []): static
     {
         return static::status(404, $responseData);
     }
 
-    public static function methodNotAllowed(array $responseData = []): static
+    public static function methodNotAllowed(array|string $responseData = []): static
     {
         return static::status(405, $responseData);
     }
 
-    public static function internalServerError(array $responseData = []): static
+    public static function internalServerError(array|string $responseData = []): static
     {
         return static::status(500, $responseData);
     }
 
-    public static function notImplemented(array $responseData = []): static
+    public static function notImplemented(array|string $responseData = []): static
     {
         return static::status(501, $responseData);
     }
 
-    public static function badGateway(array $responseData = []): static
+    public static function badGateway(array|string $responseData = []): static
     {
         return static::status(502, $responseData);
     }
 
-    public static function serviceUnavailable(array $responseData = []): static
+    public static function serviceUnavailable(array|string $responseData = []): static
     {
         return static::status(503, $responseData);
     }

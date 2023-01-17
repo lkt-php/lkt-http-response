@@ -2,34 +2,54 @@
 
 namespace Lkt\Http\Traits;
 
-use Lkt\Http\Enums\ContentType;
+use Lkt\MIME;
 
 trait ContentTypeTrait
 {
     use CharsetTrait;
 
-    protected string $contentType = ContentType::JSON;
+    protected string $contentType = MIME::JSON;
 
     public function setContentTypeJSON(): static
     {
-        $this->contentType = ContentType::JSON;
+        $this->contentType = MIME::JSON;
         return $this;
     }
 
     public function setContentTypeTextHTML(): static
     {
-        $this->contentType = ContentType::TEXT_HTML;
+        $this->contentType = MIME::HTML;
+        return $this;
+    }
+
+    public function setContentTypeByFileExtension(string $extension): static
+    {
+        $this->contentType = MIME::getByExtension($extension);
         return $this;
     }
 
     public function isJSONContentType(): bool
     {
-        return $this->contentType === ContentType::JSON;
+        return $this->contentType === MIME::JSON;
     }
 
     public function isTextHTMLContentType(): bool
     {
-        return $this->contentType === ContentType::TEXT_HTML;
+        return $this->contentType === MIME::HTML;
+    }
+
+    public function isImageContentType(): bool
+    {
+        return in_array($this->contentType, [
+            MIME::GIF,
+            MIME::PNG,
+            MIME::JPEG,
+            MIME::SVG,
+            MIME::WEBP,
+            MIME::AVIF,
+            MIME::BMP,
+            MIME::TIFF,
+        ]);
     }
 
     public function sendContentTypeHeader(): bool
@@ -48,25 +68,20 @@ trait ContentTypeTrait
         return true;
     }
 
-    public function sendJSONContent(): static
+    public function sendContent(): static
     {
         if ($this->isJSONContentType()) {
             $data = $this->getResponseData();
-            if (count($data) > 0){
+            if (is_array($data) && count($data) > 0){
                 echo json_encode($data);
             }
-        }
-        return $this;
-    }
-
-    public function sendTextHTMLContent(): static
-    {
-        if ($this->isTextHTMLContentType()) {
+        } else {
             $data = $this->getResponseData();
-            if (count($data) > 0 && isset($data['html'])){
-                echo $data['html'];
+            if (is_string($data)){
+                echo $data;
             }
         }
+
         return $this;
     }
 }
