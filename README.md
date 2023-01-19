@@ -115,6 +115,9 @@ $response->setContentTypeByFileExtension('jpg'); // It can be pdf, png, doc, doc
 $lastModified = filemtime($pathToImage);
 $response->setLastModifiedHeader($lastModified);
 
+// Turn it to download
+$response->setContentDispositionAttachment('image.jpg');
+
 // Output 'img' content
 $response->sendContent();
 ```

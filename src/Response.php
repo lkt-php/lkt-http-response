@@ -15,6 +15,8 @@ class Response
     protected int $headerExpires = -1;
     protected int $headerLastModified = -1;
 
+    protected string $headerContentDisposition = '';
+
     public function __construct(int $code = 1, array|string $responseData = [])
     {
         $this->code = $code;
@@ -107,6 +109,12 @@ class Response
         return $this;
     }
 
+    public function setContentDispositionAttachment(string $filename): static
+    {
+        $this->headerContentDisposition = 'attachment; filename="' . $filename . '"';
+        return $this;
+    }
+
     public function sendHeaders(): static
     {
         $this->sendStatusHeader();
@@ -123,7 +131,11 @@ class Response
         if ($this->headerLastModified > -1) {
             header('Last-Modified: ' . gmdate(DATE_RFC1123, $this->headerLastModified));
         }
-        
+
+        if ($this->headerContentDisposition !== '') {
+            header("Content-Disposition: {$this->headerContentDisposition}");
+        }
+
         return $this;
     }
 
