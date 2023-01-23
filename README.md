@@ -47,16 +47,16 @@ Response::ok(['some' => 'data']); // Same as: Response::status(200, ['some' => '
 | ::badGateway          | 502         |
 | ::serviceUnavailable  | 503         |
 
-## Sending status header
+## Configure HTTP headers
 
-The `Response` instance can send any http header with the status code message, only for those inside constructor list.
+The `Response` instance can handle some http header.
 
 ```php
 use Lkt\Http\Response;
 
 $response = Response::ok(['hey' => 'how are you?']);
 
-// Set content type to JSON:
+// Set content type to JSON (default Content Type)
 $response->setContentTypeJSON();
 
 // Or to text/html
@@ -77,11 +77,15 @@ $response->setCacheControlMaxAgeHeaderToOneWeek();
 $response->setCacheControlMaxAgeHeaderToOneMonth();
 $response->setCacheControlMaxAgeHeaderToOneYear();
 
-// Send the response headers
-$response->sendHeaders(); 
+// Send the response
+$response->sendContent(); 
 ```
 
-## Response format
+## Default content type
+
+The default content type for `Response` is JSON.
+
+## Sending text/html
 
 When using a text/html response, simply pass the string as an argument. By default, this will turn the response content type to `text/html`.
 
@@ -118,6 +122,54 @@ $response->setLastModifiedHeader($lastModified);
 // Turn it to download
 $response->setContentDispositionAttachment('image.jpg');
 
-// Output 'img' content
+// Output img content
 $response->sendContent();
+```
+
+## Supported file extensions
+
+`Response` implements [lkt/mime](https://github.com/lekrat/lkt-mime) to check file extensions [(see supported MIME)](https://github.com/lekrat/lkt-mime#supported-mime).
+
+## Examples
+
+### Sending a valid JSON response
+```php
+use Lkt\Http\Response;
+
+return Response::ok(['some' => 'data']);
+```
+
+### Sending a valid text/html response
+```php
+use Lkt\Http\Response;
+
+return Response::ok('<p>Hello world!</p>');
+```
+
+### Sending a forbidden response
+```php
+use Lkt\Http\Response;
+
+return Response::forbidden(); // Empty
+return Response::forbidden(['some' => 'data']); // JSON info
+return Response::forbidden('Forbidden'); // text/html info
+```
+
+### Sending a file
+```php
+use Lkt\Http\Response;
+
+return Response::ok(file_get_contents($pathToImage))
+    ->setContentTypeByFileExtension('jpg')
+    ->setLastModifiedHeader(filemtime($pathToImage));
+```
+
+### Downloading a file
+```php
+use Lkt\Http\Response;
+
+return Response::ok(file_get_contents($pathToImage))
+    ->setContentTypeByFileExtension('jpg')
+    ->setContentDispositionAttachment('image.jpg')
+    ->setLastModifiedHeader(filemtime($pathToImage));
 ```
