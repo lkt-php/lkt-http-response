@@ -10,6 +10,12 @@ trait ContentTypeTrait
 
     protected string $contentType = MIME::JSON;
 
+    public function setContentTypeMIME(string $mime): static
+    {
+        $this->contentType = $mime;
+        return $this;
+    }
+
     public function setContentTypeJSON(): static
     {
         $this->contentType = MIME::JSON;
@@ -19,6 +25,12 @@ trait ContentTypeTrait
     public function setContentTypeTextHTML(): static
     {
         $this->contentType = MIME::HTML;
+        return $this;
+    }
+
+    public function setContentTypeTextXML(): static
+    {
+        $this->contentType = MIME::XML;
         return $this;
     }
 
@@ -36,6 +48,11 @@ trait ContentTypeTrait
     public function isTextHTMLContentType(): bool
     {
         return $this->contentType === MIME::HTML;
+    }
+
+    public function isTextXMLContentType(): bool
+    {
+        return $this->contentType === MIME::XML;
     }
 
     public function isImageContentType(): bool

@@ -136,6 +136,10 @@ class Response
             header("Content-Disposition: {$this->headerContentDisposition}");
         }
 
+        if ($this->code === -1 || $this->code === 301 || $this->code === 302 || $this->code === 303) {
+            header('Location: ' . $this->responseData);
+        }
+
         return $this;
     }
 
@@ -190,47 +194,47 @@ class Response
 
         if ($this->code === 400) {
             header("{$protocol} {$this->code} Bad Request");
-            return false;
+            return true;
         }
 
         if ($this->code === 401) {
             header("{$protocol} {$this->code} Unauthorized");
-            return false;
+            return true;
         }
 
         if ($this->code === 403) {
             header("{$protocol} {$this->code} Forbidden");
-            return false;
+            return true;
         }
 
         if ($this->code === 404) {
             header("{$protocol} {$this->code} Not Found");
-            return false;
+            return true;
         }
 
         if ($this->code === 405) {
             header("{$protocol} {$this->code} Method Not Allowed");
-            return false;
+            return true;
         }
 
         if ($this->code === 500) {
             header("{$protocol} {$this->code} Internal Server Error");
-            return false;
+            return true;
         }
 
         if ($this->code === 501) {
             header("{$protocol} {$this->code} Not Implemented");
-            return false;
+            return true;
         }
 
         if ($this->code === 502) {
             header("{$protocol} {$this->code} Bad Gateway");
-            return false;
+            return true;
         }
 
         if ($this->code === 503) {
             header("{$protocol} {$this->code} Service Unavailable");
-            return false;
+            return true;
         }
         return false;
     }
@@ -238,6 +242,11 @@ class Response
     public static function status(int $code = 200, array|string $responseData = []): static
     {
         return new static($code, $responseData);
+    }
+
+    public static function redirect(string $responseData = ''): static
+    {
+        return static::status(-1, $responseData);
     }
 
     public static function ok(array|string $responseData = []): static
