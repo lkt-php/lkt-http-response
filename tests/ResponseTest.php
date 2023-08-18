@@ -1,6 +1,6 @@
 <?php
 
-namespace Lkt\Templates\Tests;
+namespace Lkt\Http\Tests;
 
 use Lkt\Http\Response;
 use PHPUnit\Framework\TestCase;
