@@ -17,6 +17,8 @@ class Response
 
     protected string $headerContentDisposition = '';
 
+    protected bool $sendCacheFlag = false;
+
     public function __construct(int $code = 1, array|string $responseData = [])
     {
         $this->code = $code;
@@ -115,10 +117,48 @@ class Response
         return $this;
     }
 
+    public function enableCache(): static
+    {
+        $this->sendCacheFlag = true;
+        return $this;
+    }
+
+    public function enableCacheToOneDay(): static
+    {
+        return $this->enableCache()
+            ->setCacheControlMaxAgeHeaderToOneDay()
+            ->setExpiresHeaderToOneDay();
+    }
+
+    public function enableCacheToOneWeek(): static
+    {
+        return $this->enableCache()
+            ->setCacheControlMaxAgeHeaderToOneWeek()
+            ->setExpiresHeaderToOneWeek();
+    }
+
+    public function enableCacheToOneMonth(): static
+    {
+        return $this->enableCache()
+            ->setCacheControlMaxAgeHeaderToOneMonth()
+            ->setExpiresHeaderToOneMonth();
+    }
+
+    public function enableCacheToOneYear(): static
+    {
+        return $this->enableCache()
+            ->setCacheControlMaxAgeHeaderToOneYear()
+            ->setExpiresHeaderToOneYear();
+    }
+
     public function sendHeaders(): static
     {
         $this->sendStatusHeader();
         $this->sendContentTypeHeader();
+
+        if ($this->sendCacheFlag) {
+            header('Pragma: cache');
+        }
 
         if ($this->headerCacheControlMaxAge > -1) {
             header("Cache-control: max-age={$this->headerCacheControlMaxAge}");
